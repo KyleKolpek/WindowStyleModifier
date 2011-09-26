@@ -287,10 +287,20 @@ BOOL CALLBACK PopulateWindowsEnumProc(HWND hWnd, LPARAM lParam)
 
 BOOL CALLBACK PopulateDesktopsEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM lParam)
 {
-	// Add an item to the combo box.
-	int index = SendDlgItemMessage((HWND)lParam, DESKTOP_COMBOBOX, CB_ADDSTRING, NULL, (LPARAM)TEXT("fad"));
+	// Surely no one has more than 10^4 monitors... right?
+	WCHAR displayID[4];
+	int index;
 
-	// Attach the data to the combo box as the item data.
+	// Get the desktop number by looking at the number of items currently in the combo box
+	index = SendDlgItemMessage((HWND)lParam, DESKTOP_COMBOBOX, CB_GETCOUNT, NULL, NULL);
+
+	// Convert the index into a string
+	_itow_s(index, displayID, 10);
+
+	// Add an item to the combo box
+	index = SendDlgItemMessage((HWND)lParam, DESKTOP_COMBOBOX, CB_ADDSTRING, NULL, (LPARAM)displayID);
+
+	// Attach the data to the combo box as the item data
 	SendDlgItemMessage((HWND)lParam, DESKTOP_COMBOBOX, CB_SETITEMDATA, index, (LPARAM)hMonitor);
 	
 	return TRUE;
